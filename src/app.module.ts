@@ -4,6 +4,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
+import { ItemsModule } from './items/items.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { UsersModule } from './users/users.module';
       playground: true,
     }),
     UsersModule,
+    ItemsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
