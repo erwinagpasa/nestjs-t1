@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
-import { Item } from './item.model';
+import { Item } from './item.entity';
 import { ItemsService } from './items.service';
 import { Inject } from '@nestjs/common';
 import { PUB_SUB } from '../pubsub.provider';
@@ -14,12 +14,12 @@ export class ItemsResolver {
   ) {}
 
   @Query(() => [Item], { name: 'items' })
-  findAll(): Item[] {
+  async findAll(): Promise<Item[]> {
     return this.itemsService.findAll();
   }
 
   @Query(() => Item, { name: 'item', nullable: true })
-  findOne(@Args('id') id: string): Item | undefined {
+  async findOne(@Args('id') id: string): Promise<Item | null> {
     return this.itemsService.findOne(id);
   }
 

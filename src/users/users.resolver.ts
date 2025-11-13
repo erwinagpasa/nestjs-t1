@@ -1,8 +1,9 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { User } from './user.model';
 import { UsersService } from './users.service';
-import { Item } from '../items/item.model';
+
 import { ItemsService } from '../items/items.service';
+import { User } from './user.entity';
+import { Item } from '../items/item.entity';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -12,17 +13,17 @@ export class UsersResolver {
   ) {}
 
   @Query(() => [User], { name: 'users' })
-  findAll(): User[] {
+  async findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
   @Query(() => User, { name: 'user', nullable: true })
-  findOne(@Args('id') id: string): User | undefined {
+  async findOne(@Args('id') id: string): Promise<User | null> {
     return this.usersService.findOne(id);
   }
 
   @ResolveField(() => [Item])
-  items(@Parent() user: User): Item[] {
+  async items(@Parent() user: User): Promise<Item[]> {
     return this.itemsService.findByUserId(user.id);
   }
 }

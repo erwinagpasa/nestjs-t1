@@ -1,65 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { Item } from './item.model';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Item } from './item.entity';
 
 @Injectable()
 export class ItemsService {
-  private items: Item[] = [
-    {
-      id: '1',
-      name: 'Laptop',
-      description: 'MacBook Pro 16-inch',
-      userId: '1',
-      price: 2499,
-    },
-    {
-      id: '2',
-      name: 'Keyboard',
-      description: 'Mechanical keyboard',
-      userId: '1',
-      price: 149,
-    },
-    {
-      id: '3',
-      name: 'Mouse',
-      description: 'Wireless mouse',
-      userId: '2',
-      price: 79,
-    },
-    {
-      id: '4',
-      name: 'Monitor',
-      description: '4K display',
-      userId: '2',
-      price: 599,
-    },
-  ];
+  constructor(
+    @InjectRepository(Item)
+    private itemsRepository: Repository<Item>,
+  ) {}
 
-  findAll(): Item[] {
-    return this.items;
+  async findAll(): Promise<Item[]> {
+    return this.itemsRepository.find();
   }
 
-  findOne(id: string): Item | undefined {
-    return this.items.find((item) => item.id === id);
+  async findOne(id: string): Promise<Item | null> {
+    return this.itemsRepository.findOne({ where: { id } });
   }
 
-  findByUserId(userId: string): Item[] {
-    return this.items.filter((item) => item.userId === userId);
+  async findByUserId(userId: string): Promise<Item[]> {
+    return this.itemsRepository.find({ where: { userId } });
   }
 
-  create(
+  async create(
     name: string,
     description: string,
     userId: string,
     price?: number,
-  ): Item {
-    const newItem: Item = {
-      id: String(this.items.length + 1),
+  ): Promise<Item> {
+    const newItem = this.itemsRepository.create({
       name,
       description,
       userId,
       price,
-    };
-    this.items.push(newItem);
-    return newItem;
+    });
+    return this.itemsRepository.save(newItem);
   }
 }
