@@ -1,4 +1,4 @@
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { ItemsService } from '../items/items.service';
 import { TransactionsService } from '../transactions/transactions.service';
@@ -32,5 +32,10 @@ export class UsersResolver {
   @ResolveField(() => [Transaction])
   async transactions(@Parent() user: User): Promise<Transaction[]> {
     return this.transactionsService.findByUserId(user.id);
+  }
+
+  @Mutation(() => Boolean)
+  async deleteUser(@Args('id') id: string): Promise<boolean> {
+    return this.usersService.delete(id);
   }
 }
